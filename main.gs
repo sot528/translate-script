@@ -1,6 +1,6 @@
 DIVIDER = '-';
 
-function main() {
+function myFunction() {
 
   const SHEET = SpreadsheetApp.getActiveSheet(); //シートを取得
   const ACTIVE_CELL = SHEET.getActiveCell(); //アクティブセルを取得
@@ -92,7 +92,8 @@ function getVerbFromAlc(word) {
   }
 
   var alc = html.match(/<meta\ name="description"\ content="([\s\S]*?)\ -\ /i);
-  alc = "\n\n" + alc[1].replace(word + ' ', '')
+
+  alc = !alc ? '' : "\n\n" + alc[1].replace(word + ' ', '')
       .replace('&lt;b&gt;', '').replace('&lt;/b&gt;', '').trim();
   alc = alc.match(/[動詞|自動|他動]+/i) ? alc : '';
 
@@ -191,7 +192,7 @@ function clear() {
     if (DATA_RANGE_VALUES[i][1] === '') {
       cell = SHEET.getRange(rowIndex, 1);
       cell.activate();
-      main();
+      myFunction();
     }
   }
 
