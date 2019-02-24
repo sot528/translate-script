@@ -25,8 +25,8 @@ function myFunction() {
   // 既存の単語は翻訳しない
   const exists = is_exists(SHEET, TARGET);
   if (TARGET !== '' && exists) {
-    ACTIVE_CELL.offset(0, 1).setValue(exists + '\n' + TARGET + ': ALREADY EXISTS.');
-    ACTIVE_CELL.offset(0, 0).setValue('');
+    ACTIVE_CELL.offset(0, 1).setValue('ALREADY EXISTS.\n\n' + exists);
+    //ACTIVE_CELL.offset(0, 0).setValue('');
     return false;
   }
 
