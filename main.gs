@@ -23,8 +23,9 @@ function myFunction() {
   }
 
   // 既存の単語は翻訳しない
-  if (TARGET !== '' && is_exists(SHEET, TARGET)) {
-    ACTIVE_CELL.offset(0, 1).setValue(TARGET + ': ALREADY EXISTS.');
+  const exists = is_exists(SHEET, TARGET);
+  if (TARGET !== '' && exists) {
+    ACTIVE_CELL.offset(0, 1).setValue(exists + '\n' + TARGET + ': ALREADY EXISTS.');
     ACTIVE_CELL.offset(0, 0).setValue('');
     return false;
   }
@@ -34,7 +35,8 @@ function myFunction() {
   // 変換できなかった単語はGoogleの検索リンクを貼る
   if (WORD_INFO[0].match('weblio辞書で英語学習')) {
     ACTIVE_CELL.offset(0, 1).setValue('https://www.google.com/search?q='
-        + TARGET.replace(/\s/g, '+'));
+        + TARGET.replace(/\s/g, '+'))
+        + '&source=lnt&tbs=lr:lang_1ja&lr=lang_ja';
     return false;
   }
 
@@ -92,7 +94,7 @@ function getVerbFromAlc(word) {
   }
 
   var alc = html.match(/<meta\ name="description"\ content="([\s\S]*?)\ -\ /i);
-
+  
   alc = !alc ? '' : "\n\n" + alc[1].replace(word + ' ', '')
       .replace('&lt;b&gt;', '').replace('&lt;/b&gt;', '').trim();
   alc = alc.match(/[動詞|自動|他動]+/i) ? alc : '';
@@ -101,17 +103,19 @@ function getVerbFromAlc(word) {
 }
 
 // すでにシートに存在するか確認
-// TODO: パフォーマンス改善のため1列目だけを検査したい
 function is_exists(sheet, val) {
   const DAT = sheet.getDataRange().getValues(); //受け取ったシートのデータを二次元配列に取得
 
   const LOWERCASE_VAL = val.toLowerCase();
   var counter = 0;
+  var exsistingTranslation = '';
   for (var i = 1; i < DAT.length; i++) {
     if (DAT[i][0].toLowerCase() === LOWERCASE_VAL) {
       ++counter;
       if (counter >= 2) {
-        return true;
+        return exsistingTranslation;
+      }else{
+        exsistingTranslation = DAT[i][1];
       }
     }
   }
